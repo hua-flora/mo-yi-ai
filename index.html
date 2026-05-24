@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>墨艺AI · 角色设计 | 提示词 | 漫剧分镜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ---- 粒子背景 ---- */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---- Nav ---- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #c9a84c, #f0d68a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: #999;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color .3s;
+        }
+        .nav-links a:hover {
+            color: #f0d68a;
+        }
+
+        /* ---- Hero ---- */
+        .hero {
+            padding: 100px 0 80px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #f0d68a 0%, #c9a84c 50%, #f0d68a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: #888;
+            max-width: 640px;
+            margin: 0 auto 40px;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #c9a84c, #f0d68a);
+            color: #0a0a0a;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(201,168,76,.3);
+        }
+        .btn-outline {
+            border: 1px solid rgba(255,255,255,.2);
+            color: #e0e0e0;
+            background: transparent;
+        }
+        .btn-outline:hover {
+            border-color: #f0d68a;
+            color: #f0d68a;
+        }
+
+        /* ---- Services ---- */
+        .section {
+            padding: 80px 0;
+        }
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .section-sub {
+            text-align: center;
+            color: #666;
+            margin-bottom: 60px;
+            font-size: 16px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .service-card {
+            background: rgba(255,255,255,.03);
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 16px;
+            padding: 36px 28px;
+            transition: all .4s;
+        }
+        .service-card:hover {
+            border-color: rgba(201,168,76,.3);
+            transform: translateY(-4px);
+            background: rgba(255,255,255,.05);
+        }
+        .service-card .icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        .service-card h3 {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .service-card p {
+            color: #888;
+            font-size: 14px;
+        }
+        .service-card .price {
+            display: inline-block;
+            margin-top: 16px;
+            color: #f0d68a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ---- Portfolio ---- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .portfolio-item {
+            aspect-ratio: 3/4;
+            background: rgba(255,255,255,.03);
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 14px;
+            transition: all .3s;
+            text-align: center;
+            padding: 20px;
+        }
+        .portfolio-item:hover {
+            border-color: rgba(201,168,76,.3);
+        }
+
+        /* ---- About ---- */
+        .about-content {
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+            color: #888;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        .about-content strong {
+            color: #e0e0e0;
+        }
+
+        /* ---- Contact ---- */
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .contact-card {
+            background: rgba(255,255,255,.03);
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+        }
+        .contact-card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .contact-card h4 {
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .contact-card p {
+            color: #888;
+            font-size: 14px;
+        }
+        .contact-card a {
+            color: #f0d68a;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        /* ---- Footer ---- */
+        footer {
+            border-top: 1px solid rgba(255,255,255,.06);
+            padding: 40px 0;
+            text-align: center;
+            color: #444;
+            font-size: 13px;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+            nav { flex-direction: column; gap: 12px; }
+            .nav-links { gap: 20px; }
+            .section { padding: 50px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Nav -->
+    <div class="container">
+        <nav>
+            <div class="logo">墨艺AI</div>
+            <ul class="nav-links">
+                <li><a href="#services">服务</a></li>
+                <li><a href="#portfolio">作品</a></li>
+                <li><a href="#about">关于</a></li>
+                <li><a href="#contact">联系</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>AI角色设计 · 提示词 ·<br>漫剧分镜</h1>
+            <p>
+                用 AI 把你的想法变成画面。角色立绘、漫剧分镜、小说封面、场景概念图——你给需求，我出成品。
+            </p>
+            <div class="hero-btns">
+                <a href="#contact" class="btn btn-primary">立即下单</a>
+                <a href="#services" class="btn btn-outline">查看服务</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="section" id="services">
+        <div class="container">
+            <h2 class="section-title">服务项目</h2>
+            <p class="section-sub">按需定制，快速交付</p>
+            <div class="services-grid">
+
+                <div class="service-card">
+                    <div class="icon">🎨</div>
+                    <h3>AI 角色设计</h3>
+                    <p>角色三视图、全身立绘、半身像。古风、仙侠、现代、科幻等风格均可。提供多角度设计，适合漫画、小说、游戏使用。</p>
+                    <span class="price">起 9.9 元 / 套</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">📝</div>
+                    <h3>提示词代写</h3>
+                    <p>为 Midjourney / Stable Diffusion / 即梦 / DALL-E 等工具编写精准提示词。中文 / 英文，让 AI 一次性出你想要的效果。</p>
+                    <span class="price">起 4.9 元 / 条</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">🎬</div>
+                    <h3>漫剧分镜脚本</h3>
+                    <p>整部漫剧的剧本 + 分镜 + 画面提示词一站式输出。重生、修仙、都市、悬疑等题材，每集分镜直接可用。</p>
+                    <span class="price">起 19.9 元 / 集</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">📖</div>
+                    <h3>小说封面 / 插图</h3>
+                    <p>网络小说封面、章节插图、角色海报。根据小说内容定制，统一画风，适合番茄、起点、晋江等平台。</p>
+                    <span class="price">起 14.9 元 / 张</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">🖼️</div>
+                    <h3>壁纸 / 头像定制</h3>
+                    <p>个人专属壁纸、社交头像、情侣头像。古风 / 二次元 / 写实风格任选，送人自用两相宜。</p>
+                    <span class="price">起 9.9 元 / 张</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon">⚡</div>
+                    <h3>加急 / 批量</h3>
+                    <p>量大优惠，加急可当天交付。长期合作价更优。具体根据需求报价，欢迎详询。</p>
+                    <span class="price">量大从优</span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section class="section" id="portfolio">
+        <div class="container">
+            <h2 class="section-title">近期作品</h2>
+            <p class="section-sub">部分案例展示</p>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">🖼️<br>古风角色立绘<br><span style="font-size:12px;color:#444;">谢云峥 · 黑金劲装</span></div>
+                <div class="portfolio-item">🖼️<br>古风角色立绘<br><span style="font-size:12px;color:#444;">赵明渊 · 蓝白广袖</span></div>
+                <div class="portfolio-item">🖼️<br>古风角色立绘<br><span style="font-size:12px;color:#444;">苏婉清 · 紫纱裙</span></div>
+                <div class="portfolio-item">🖼️<br>漫剧分镜<br><span style="font-size:12px;color:#444;">《睁眼》EP1 · 22镜</span></div>
+                <div class="portfolio-item">🖼️<br>更多作品<br><span style="font-size:12px;color:#444;">更新中...</span></div>
+                <div class="portfolio-item">🖼️<br>更多作品<br><span style="font-size:12px;color:#444;">更新中...</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title">关于我</h2>
+            <p class="section-sub">AI 时代的独立创作者</p>
+            <div class="about-content">
+                <p>
+                    专注 AI 视觉创作。擅长 <strong>国风仙侠</strong>、<strong>角色设计</strong>、<strong>漫剧分镜</strong>。
+                    熟练掌握 Midjourney、即梦AI、Stable Diffusion 等多款 AI 绘图工具，对提示词工程有丰富的实战经验。
+                </p>
+                <br>
+                <p>
+                    服务模式：<strong>你提需求 → 我出图 → 你满意再付款</strong>。<br>
+                    不讲套路，不画大饼，快速交付。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+        <div class="container">
+            <h2 class="section-title">联系我</h2>
+            <p class="section-sub">直接沟通，快速响应</p>
+            <div class="contact-cards">
+                <div class="contact-card">
+                    <div class="icon">💬</div>
+                    <h4>微信</h4>
+                    <p>扫码或搜索</p>
+                    <a href="#">（填写你的微信）</a>
+                </div>
+                <div class="contact-card">
+                    <div class="icon">🛒</div>
+                    <h4>闲鱼</h4>
+                    <p>直接下单</p>
+                    <a href="#">（填写闲鱼链接）</a>
+                </div>
+                <div class="contact-card">
+                    <div class="icon">📮</div>
+                    <h4>邮箱</h4>
+                    <p>发需求至此</p>
+                    <a href="#">（填写你的邮箱）</a>
+                </div>
+            </div>
+            <p style="text-align:center;margin-top:40px;color:#555;font-size:14px;">
+                点击上方按钮直接联系，24小时内回复
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 墨艺AI · 用 AI 实现你的想象力</p>
+        </div>
+    </footer>
+
+    <!-- 粒子动画 -->
+    <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(201, 168, 76, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            // Draw lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(201, 168, 76, ${0.06 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+    <script>
+        // 联系方式可编辑 - 双击修改
+        document.querySelectorAll('.contact-card a').forEach(el => {
+            el.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                const current = this.textContent.trim();
+                const input = prompt('输入你的联系方式：', current);
+                if (input) this.textContent = input;
+            });
+        });
+    </script>
+</body>
+</html>
