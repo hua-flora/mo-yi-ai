@@ -64,6 +64,7 @@
             text-decoration: none;
             font-size: 15px;
             transition: color .3s;
+            cursor: pointer;
         }
         .nav-links a:hover {
             color: #f0d68a;
@@ -229,6 +230,12 @@
             border-radius: 12px;
             padding: 28px;
             text-align: center;
+            cursor: default;
+        }
+        .contact-card a {
+            cursor: pointer;
+            display: inline-block;
+            padding: 4px 0;
         }
         .contact-card .icon {
             font-size: 28px;
@@ -478,14 +485,14 @@
                 <div class="contact-card">
                     <div class="icon">💬</div>
                     <h4>微信</h4>
-                    <p>扫码或搜索</p>
-                    <a href="https://wa.me/8618506697073">18506697073</a>
+                    <p>点击复制微信号</p>
+                    <a href="tel:18506697073" onclick="alert('微信号：18506697073\n复制后打开微信搜索添加')">18506697073</a>
                 </div>
                 <div class="contact-card">
                     <div class="icon">🛒</div>
                     <h4>闲鱼</h4>
-                    <p>直接下单</p>
-                    <a href="#">（填写闲鱼链接）</a>
+                    <p>搜索"花花AI"下单</p>
+                    <a href="https://m.tb.cn/h.xxxxx" onclick="alert('闲鱼搜索：花花AI\n或联系微信获取链接')">点击查看</a>
                 </div>
                 <div class="contact-card">
                     <div class="icon">📮</div>
@@ -573,6 +580,16 @@
         animate();
     </script>
     <script>
+        // 导航平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
         // 联系方式可编辑 - 双击修改
         document.querySelectorAll('.contact-card a').forEach(el => {
             el.addEventListener('dblclick', function(e) {
